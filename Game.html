@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Rock Paper Scissors Game</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<style>
+body{
+  font-family: Arial;
+  background-image: url("rockpaperscissors.jpeg");   
+  background-size: cover;  
+  text-align: center;  
+  padding-top:50px;  
+}
+
+button{
+  padding:20px 40px;  
+  margin-top:10px;  
+  background:#67b358;  
+  color:white;  
+  border-radius: 20px;    
+  cursor:pointer;  
+}
+
+input{
+  padding:10px;  
+  margin:5px;  
+  border-radius:10px;  
+  background: rgba(206, 213, 224, 0.4);  
+  backdrop-filter: blur(5px);  
+  color: black;  
+  outline: none;  
+}
+
+p{
+  font-size: 30px;  
+  color: #250763;  
+}
+
+h2{
+  text-align: center;  
+  font-size: 40px;  
+  color: #150aae;  
+  text-shadow: 1px 1px 3px #fff;  
+}
+
+.glass{
+  display: inline-block;  
+  padding: 20px 30px;  
+  border-radius: 10px;  
+  background: rgba(255, 255, 255, 0.4);  
+  backdrop-filter: blur(5px);  
+  color: #2c0f56;  
+  font-weight: bold;  
+  font-size: 24px;  
+  margin-bottom: 20px;  
+}
+</style>
+</head>
+
+<body>
+
+<div id="login">
+  <h2>Login</h2>
+  <input type="text" id="username" placeholder="Username"><br>
+  <input type="password" id="password" placeholder="Password"><br>
+  <button onclick="login()">Login</button>
+  <p id="loginMsg"></p>
+</div>
+
+<div id="game" style="display:none;">
+  <h2>Rock Paper Scissors Game</h2>
+  <p id="welcomeMsg" class="glass"></p>
+
+  <div id="choices" style="display:none;">
+    <p class="glass">Beat the computer 3 times to win!<br>Choose your move:</p>
+    <br>
+    <button class="moveBtn" onclick="playGame('rock')">Rock</button>
+    <button class="moveBtn" onclick="playGame('paper')">Paper</button>
+    <button class="moveBtn" onclick="playGame('scissors')">Scissors</button>
+  </div>
+
+  <p id="score" class="glass">Score: You 0 - 0 Computer</p><br>
+  <p id="message" class="glass"></p>
+
+  <button id="playAgainBtn" style="display:none;" onclick="resetGame()">Play Again</button>
+</div><br>
+
+<div id="resultPage" style="display:none;">
+  <p id="finalResult" class="glass"></p><br>
+  <button onclick="backToGame()">Play Again</button><br>
+</div>
+
+<script>
+let userScore = 0;
+let computerScore = 0;
+let username = "";
+
+function login(){
+  username = $("#username").val();
+  let p = $("#password").val();
+
+  if(username=="" || p==""){
+    $("#loginMsg").html("Please enter username and password!");
+  } else {
+    $("#login").fadeOut(500, function(){
+      $("#game").fadeIn(500);
+    });
+
+    $("#welcomeMsg").html("Welcome, " + username + "!");
+    $("#choices").fadeIn(500);
+
+    userScore = 0;
+    computerScore = 0;
+    updateScore();
+  }
+}
+
+function playGame(userChoice){
+  if(userScore==3 || computerScore==3){
+    return;
+  }
+
+  let choices = ["rock","paper","scissors"];
+  let computerChoice = choices[Math.floor(Math.random()*3)];
+
+  let text = "Computer chose: " + computerChoice + "<br>";
+
+  if(userChoice === computerChoice){
+    text += "Result: Draw!";
+  }
+  else if(
+    (userChoice=="rock" && computerChoice=="scissors") ||
+    (userChoice=="paper" && computerChoice=="rock") ||
+    (userChoice=="scissors" && computerChoice=="paper")
+  ){
+    text += "Result: You win this round 🤩";
+    userScore++;
+  }
+  else{
+    text += "Result: You lose this round 😥";
+    computerScore++;
+  }
+
+  $("#message").hide().html(text).fadeIn(500);
+  updateScore();
+
+  if(userScore==3 || computerScore==3){
+    let winnerText = userScore>computerScore ? "🎉 You won the game!" : "💀 You lost the game!";
+    $("#finalResult").html(winnerText + "<br>Final Score: You " + userScore + " - " + computerScore + " Computer");
+
+    $("#game").fadeOut(500, function(){
+      $("#resultPage").fadeIn(500);
+    });
+  }
+}
+
+function updateScore(){
+  $("#score").hide().html("Score: You " + userScore + " | " + computerScore + " Computer").fadeIn(300);
+}
+
+function resetGame(){
+  userScore = 0;
+  computerScore = 0;
+  updateScore();
+  $("#message").fadeOut(300).html("");
+  $("#choices").fadeIn(500);
+  $("#playAgainBtn").fadeOut(300);
+}
+
+function backToGame(){
+  userScore = 0;
+  computerScore = 0;
+  updateScore();
+
+  $("#resultPage").fadeOut(500, function(){
+    $("#game").fadeIn(500);
+  });
+
+  $("#message").html("");
+  $("#choices").fadeIn(500);
+}
+</script>
+
+</body>
+</html>
